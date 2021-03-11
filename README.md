@@ -5,3 +5,4 @@ Der SWT Unterricht wird durch Beispiele ergänzt
 
 Übungen an einem Github Repo durchführen
 
+hallo
