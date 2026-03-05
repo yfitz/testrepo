@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Mini Games Spass!</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    min-height: 100vh;
+    color: #fff;
+    overflow-x: hidden;
+  }
+  h1 {
+    text-align: center;
+    font-size: 2.5em;
+    padding: 20px;
+    background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbow 3s linear infinite;
+    background-size: 200%;
+  }
+  @keyframes rainbow { 0%{background-position:0%} 100%{background-position:200%} }
+
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: all 0.3s;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+  }
+  .tab:hover { transform: scale(1.1); }
+  .tab.active { background: linear-gradient(135deg, #ff6b6b, #feca57); color: #000; }
+
+  .game-section {
+    display: none;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .game-section.active { display: block; }
+
+  h2 { text-align: center; margin-bottom: 15px; color: #feca57; }
+
+  /* ---- SNAKE ---- */
+  #snakeCanvas {
+    display: block;
+    margin: 0 auto;
+    background: #0d1117;
+    border: 3px solid #48dbfb;
+    border-radius: 10px;
+  }
+  /* ---- CLICKER ---- */
+  #clickBtn {
+    display: block;
+    margin: 10px auto;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    font-size: 1.5em;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    background: radial-gradient(circle, #ff6b6b, #c0392b);
+    color: white;
+    transition: transform 0.1s;
+    box-shadow: 0 0 30px rgba(255,107,107,0.5);
+  }
+  #clickBtn:active { transform: scale(0.9); }
+  #clickScore { text-align:center; font-size:1.5em; margin: 10px; }
+  #clickUpgrades { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
+  .upgrade-btn {
+    padding: 8px 15px;
+    border: 2px solid #feca57;
+    background: rgba(254,202,87,0.1);
+    color: #feca57;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.2s;
+  }
+  .upgrade-btn:hover { background: rgba(254,202,87,0.3); }
+  .upgrade-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ---- MEMORY ---- */
+  #memoryGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+  .memory-card {
+    height: 80px;
+    border-radius: 10px;
+    cursor: pointer;
+    perspective: 600px;
+    position: relative;
+  }
+  .card-inner {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+  }
+  .memory-card.flipped .card-inner { transform: rotateY(180deg); }
+  .card-front, .card-back {
+    position: absolute;
+    width: 100%; height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+  }
+  .card-front { background: linear-gradient(135deg, #341f97, #5f27cd); }
+  .card-back { background: rgba(255,255,255,0.1); transform: rotateY(180deg); border: 2px solid rgba(255,255,255,0.2); }
+  #memoryStatus { text-align:center; margin: 10px 0; font-size: 1.2em; }
+
+  /* ---- REACTION ---- */
+  #reactionBox {
+    width: 100%; height: 200px;
+    border-radius: 15px;
+    background: #c0392b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: background 0.3s;
+    user-select: none;
+  }
+  #reactionBox.go { background: #27ae60; }
+  #reactionResult { text-align:center; font-size:1.3em; margin-top:10px; }
+  #reactionScores { text-align:center; margin-top:10px; color: #aaa; }
+
+  /* ---- BUTTONS ---- */
+  .btn {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #48dbfb, #0abde3);
+    color: #fff;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .btn:hover { transform: scale(1.05); }
+
+  .score-display {
+    text-align: center;
+    font-size: 1.2em;
+    margin: 10px;
+    color: #48dbfb;
+  }
+
+  /* ---- WORDLE-LIKE ---- */
+  #wordGrid { display: flex; flex-direction: column; gap: 5px; align-items: center; margin-bottom: 10px; }
+  .word-row { display: flex; gap: 5px; }
+  .word-cell {
+    width: 50px; height: 50px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5em; font-weight: bold;
+    text-transform: uppercase;
+    transition: background 0.3s;
+  }
+  .word-cell.correct { background: #27ae60; border-color: #27ae60; }
+  .word-cell.present { background: #f39c12; border-color: #f39c12; }
+  .word-cell.absent { background: #555; border-color: #555; }
+  #wordInput { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+  #wordInput input {
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #48dbfb;
+    background: rgba(0,0,0,0.3);
+    color: #fff;
+    font-size: 1.2em;
+    width: 130px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  #wordMsg { text-align: center; font-size: 1.2em; margin-top: 10px; min-height: 30px; }
+</style>
+</head>
+<body>
+
+<h1>Mini Games Spass!</h1>
+
+<div class="tabs">
+  <button class="tab active" onclick="showGame('clicker')">Klicker</button>
+  <button class="tab" onclick="showGame('snake')">Snake</button>
+  <button class="tab" onclick="showGame('memory')">Memory</button>
+  <button class="tab" onclick="showGame('reaction')">Reaktion</button>
+  <button class="tab" onclick="showGame('wordle')">Wordle</button>
+</div>
+
+<!-- CLICKER -->
+<div id="clicker" class="game-section active">
+  <h2>Keks Klicker</h2>
+  <div id="clickScore">Kekse: 0</div>
+  <button id="clickBtn" onclick="click_cookie()">KEKS</button>
+  <div id="clickUpgrades">
+    <button class="upgrade-btn" id="upg1" onclick="buyUpgrade(1)">Oma (10 Kekse)<br>+1/sek</button>
+    <button class="upgrade-btn" id="upg2" onclick="buyUpgrade(2)">Fabrik (100 Kekse)<br>+10/sek</button>
+    <button class="upgrade-btn" id="upg3" onclick="buyUpgrade(3)">Zeitmaschine (500 Kekse)<br>+50/sek</button>
+  </div>
+</div>
+
+<!-- SNAKE -->
+<div id="snake" class="game-section">
+  <h2>Snake</h2>
+  <div class="score-display">Punkte: <span id="snakeScore">0</span></div>
+  <canvas id="snakeCanvas" width="400" height="400"></canvas>
+  <button class="btn" onclick="startSnake()">Neu starten</button>
+  <p style="text-align:center;color:#aaa;margin-top:10px">Pfeiltasten oder WASD zum Steuern</p>
+</div>
+
+<!-- MEMORY -->
+<div id="memory" class="game-section">
+  <h2>Memory</h2>
+  <div id="memoryStatus">Paare gefunden: 0 / 8</div>
+  <div id="memoryGrid"></div>
+  <button class="btn" onclick="initMemory()">Neu mischen</button>
+</div>
+
+<!-- REACTION -->
+<div id="reaction" class="game-section">
+  <h2>Reaktionstest</h2>
+  <div id="reactionBox" onclick="reactionClick()">Warte auf Grun...</div>
+  <div id="reactionResult"></div>
+  <div id="reactionScores"></div>
+  <button class="btn" onclick="startReaction()">Starten</button>
+</div>
+
+<!-- WORDLE -->
+<div id="wordle" class="game-section">
+  <h2>Wort Raten (5 Buchstaben)</h2>
+  <div id="wordGrid"></div>
+  <div id="wordInput">
+    <input type="text" id="wordGuessInput" maxlength="5" placeholder="WORT" onkeydown="if(event.key==='Enter')submitGuess()">
+    <button class="btn" style="margin:0" onclick="submitGuess()">Raten</button>
+  </div>
+  <div id="wordMsg"></div>
+  <button class="btn" onclick="initWordle()">Neues Spiel</button>
+</div>
+
+<script>
+// ===== TAB SWITCHING =====
+function showGame(id) {
+  document.querySelectorAll('.game-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'snake') startSnake();
+}
+
+// ===== CLICKER =====
+let cookies = 0, perSec = 0, perClick = 1;
+const upgrades = { 1: {cost:10,rate:1,owned:0}, 2: {cost:100,rate:10,owned:0}, 3: {cost:500,rate:50,owned:0} };
+
+function click_cookie() {
+  cookies += perClick;
+  updateClickUI();
+  const btn = document.getElementById('clickBtn');
+  btn.style.transform = 'scale(0.85)';
+  setTimeout(() => btn.style.transform = '', 100);
+}
+function buyUpgrade(id) {
+  const u = upgrades[id];
+  if (cookies >= u.cost) {
+    cookies -= u.cost;
+    u.owned++;
+    perSec += u.rate;
+    u.cost = Math.floor(u.cost * 1.8);
+    document.getElementById('upg'+id).innerHTML =
+      `${id===1?'Oma':id===2?'Fabrik':'Zeitmaschine'} (${u.cost} Kekse)<br>+${u.rate}/sek [${u.owned}]`;
+    updateClickUI();
+  }
+}
+function updateClickUI() {
+  document.getElementById('clickScore').textContent = `Kekse: ${Math.floor(cookies)} (${perSec}/sek)`;
+  [1,2,3].forEach(i => {
+    document.getElementById('upg'+i).disabled = cookies < upgrades[i].cost;
+  });
+}
+setInterval(() => { cookies += perSec/10; updateClickUI(); }, 100);
+
+// ===== SNAKE =====
+const GRID = 20, CELL = 20;
+let snake, dir, food, snakeInterval, snakePts, gameRunning = false;
+const canvas = document.getElementById('snakeCanvas');
+const ctx = canvas.getContext('2d');
+
+function startSnake() {
+  snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+  dir = {x:1,y:0};
+  snakePts = 0;
+  gameRunning = true;
+  placeFood();
+  clearInterval(snakeInterval);
+  snakeInterval = setInterval(stepSnake, 120);
+}
+
+function placeFood() {
+  do {
+    food = {x: Math.floor(Math.random()*GRID), y: Math.floor(Math.random()*GRID)};
+  } while (snake.some(s => s.x===food.x && s.y===food.y));
+}
+
+function stepSnake() {
+  const head = {x: snake[0].x+dir.x, y: snake[0].y+dir.y};
+  if (head.x<0||head.x>=GRID||head.y<0||head.y>=GRID||snake.some(s=>s.x===head.x&&s.y===head.y)) {
+    clearInterval(snakeInterval);
+    gameRunning = false;
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(0,0,400,400);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 40px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('GAME OVER', 200, 180);
+    ctx.font = '25px sans-serif';
+    ctx.fillStyle = '#fff';
+    ctx.fillText('Punkte: '+snakePts, 200, 230);
+    return;
+  }
+  snake.unshift(head);
+  if (head.x===food.x && head.y===food.y) {
+    snakePts += 10;
+    document.getElementById('snakeScore').textContent = snakePts;
+    placeFood();
+  } else {
+    snake.pop();
+  }
+  drawSnake();
+}
+
+function drawSnake() {
+  ctx.fillStyle = '#0d1117';
+  ctx.fillRect(0,0,400,400);
+  // grid dots
+  ctx.fillStyle = 'rgba(255,255,255,0.03)';
+  for(let x=0;x<GRID;x++) for(let y=0;y<GRID;y++) ctx.fillRect(x*CELL+9,y*CELL+9,2,2);
+  // food
+  ctx.fillStyle = '#ff6b6b';
+  ctx.beginPath();
+  ctx.arc(food.x*CELL+CELL/2, food.y*CELL+CELL/2, CELL/2-2, 0, Math.PI*2);
+  ctx.fill();
+  // snake
+  snake.forEach((s,i) => {
+    const ratio = i/snake.length;
+    ctx.fillStyle = `hsl(${160-ratio*60},100%,${50-ratio*20}%)`;
+    ctx.beginPath();
+    ctx.roundRect(s.x*CELL+1, s.y*CELL+1, CELL-2, CELL-2, 4);
+    ctx.fill();
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if (!gameRunning) return;
+  const map = {ArrowUp:{x:0,y:-1},ArrowDown:{x:0,y:1},ArrowLeft:{x:-1,y:0},ArrowRight:{x:1,y:0},
+               w:{x:0,y:-1},s:{x:0,y:1},a:{x:-1,y:0},d:{x:1,y:0}};
+  const nd = map[e.key];
+  if (nd && !(nd.x===-dir.x && nd.y===-dir.y)) {
+    dir = nd;
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+  }
+});
+
+// ===== MEMORY =====
+const emojis = ['🎮','🍕','🚀','⚡','🎵','🌈','🦄','🔥'];
+let memFlipped = [], memMatched = 0, memLock = false;
+
+function initMemory() {
+  const cards = [...emojis,...emojis].sort(()=>Math.random()-0.5);
+  memFlipped = []; memMatched = 0; memLock = false;
+  document.getElementById('memoryStatus').textContent = 'Paare gefunden: 0 / 8';
+  const grid = document.getElementById('memoryGrid');
+  grid.innerHTML = '';
+  cards.forEach((emoji, i) => {
+    const card = document.createElement('div');
+    card.className = 'memory-card';
+    card.innerHTML = `<div class="card-inner"><div class="card-front">?</div><div class="card-back">${emoji}</div></div>`;
+    card.dataset.emoji = emoji;
+    card.dataset.index = i;
+    card.onclick = () => flipCard(card);
+    grid.appendChild(card);
+  });
+}
+
+function flipCard(card) {
+  if (memLock || card.classList.contains('flipped') || card.dataset.matched) return;
+  card.classList.add('flipped');
+  memFlipped.push(card);
+  if (memFlipped.length === 2) {
+    memLock = true;
+    setTimeout(() => {
+      if (memFlipped[0].dataset.emoji === memFlipped[1].dataset.emoji) {
+        memFlipped.forEach(c => { c.dataset.matched = '1'; c.style.opacity = '0.6'; });
+        memMatched++;
+        document.getElementById('memoryStatus').textContent = `Paare gefunden: ${memMatched} / 8`;
+        if (memMatched === 8) setTimeout(()=>alert('Gewonnen! Alle Paare gefunden!'),200);
+      } else {
+        memFlipped.forEach(c => c.classList.remove('flipped'));
+      }
+      memFlipped = []; memLock = false;
+    }, 900);
+  }
+}
+
+// ===== REACTION =====
+let reactionState = 'idle', reactionStart, reactionTimeout;
+const reactionTimes = [];
+
+function startReaction() {
+  const box = document.getElementById('reactionBox');
+  document.getElementById('reactionResult').textContent = '';
+  reactionState = 'waiting';
+  box.style.background = '#c0392b';
+  box.textContent = 'Warte...';
+  const delay = 1500 + Math.random() * 3000;
+  reactionTimeout = setTimeout(() => {
+    box.style.background = '#27ae60';
+    box.textContent = 'JETZT KLICKEN!';
+    box.classList.add('go');
+    reactionState = 'go';
+    reactionStart = Date.now();
+  }, delay);
+}
+
+function reactionClick() {
+  if (reactionState === 'go') {
+    const ms = Date.now() - reactionStart;
+    reactionTimes.push(ms);
+    document.getElementById('reactionResult').textContent = `${ms}ms - ${getRating(ms)}`;
+    const box = document.getElementById('reactionBox');
+    box.classList.remove('go');
+    box.style.background = '#c0392b';
+    box.textContent = 'Nochmal klicken zum Starten';
+    const avg = Math.round(reactionTimes.reduce((a,b)=>a+b,0)/reactionTimes.length);
+    document.getElementById('reactionScores').textContent =
+      `Versuche: ${reactionTimes.length} | Durchschnitt: ${avg}ms | Beste: ${Math.min(...reactionTimes)}ms`;
+    reactionState = 'idle';
+  } else if (reactionState === 'waiting') {
+    clearTimeout(reactionTimeout);
+    document.getElementById('reactionResult').textContent = 'Zu frueh! Warte auf Gruen!';
+    document.getElementById('reactionBox').textContent = 'Nochmal klicken zum Starten';
+    reactionState = 'idle';
+  } else {
+    startReaction();
+  }
+}
+
+function getRating(ms) {
+  if (ms < 150) return 'UNMOEGLICH SCHNELL!';
+  if (ms < 200) return 'Blitzschnell!';
+  if (ms < 250) return 'Sehr gut!';
+  if (ms < 300) return 'Gut!';
+  if (ms < 400) return 'Okay';
+  return 'Etwas langsam...';
+}
+
+// ===== WORDLE =====
+const wordleWords = ['KATZE','HUNDE','BAUMS','TISCH','LAMPE','FEUER','WASSER','APFEL','BIRNE','STURM',
+  'WOLKE','NACHT','STERN','MOND','RAUCH','KREUZ','STROM','GLAUB','FISCH','VOGEL'];
+let wordleSecret, wordleGuesses, wordleRow;
+
+function initWordle() {
+  wordleSecret = wordleWords[Math.floor(Math.random()*wordleWords.length)];
+  // make sure it's 5 letters
+  wordleSecret = wordleSecret.slice(0,5).padEnd(5,'A');
+  wordleGuesses = [];
+  wordleRow = 0;
+  document.getElementById('wordMsg').textContent = '';
+  document.getElementById('wordGuessInput').value = '';
+  document.getElementById('wordGuessInput').disabled = false;
+  const grid = document.getElementById('wordGrid');
+  grid.innerHTML = '';
+  for (let r=0;r<6;r++) {
+    const row = document.createElement('div');
+    row.className = 'word-row';
+    row.id = 'wr'+r;
+    for (let c=0;c<5;c++) {
+      const cell = document.createElement('div');
+      cell.className = 'word-cell';
+      cell.id = `wc${r}${c}`;
+      row.appendChild(cell);
+    }
+    grid.appendChild(row);
+  }
+}
+
+function submitGuess() {
+  if (wordleRow >= 6) return;
+  const input = document.getElementById('wordGuessInput');
+  const guess = input.value.toUpperCase().trim();
+  if (guess.length !== 5) {
+    document.getElementById('wordMsg').textContent = 'Bitte genau 5 Buchstaben eingeben!';
+    return;
+  }
+  input.value = '';
+  const secret = wordleSecret;
+  const result = Array(5).fill('absent');
+  const sArr = secret.split(''), gArr = guess.split('');
+  const used = Array(5).fill(false);
+  // correct first
+  gArr.forEach((l,i) => { if(l===sArr[i]){result[i]='correct';used[i]=true;} });
+  // present
+  gArr.forEach((l,i) => {
+    if (result[i]==='correct') return;
+    const j = sArr.findIndex((s,k)=>s===l && !used[k] && result[k]!=='correct');
+    if (j!==-1) { result[i]='present'; used[j]=true; }
+  });
+  // render
+  result.forEach((r,i) => {
+    const cell = document.getElementById(`wc${wordleRow}${i}`);
+    cell.textContent = gArr[i];
+    cell.className = 'word-cell '+r;
+  });
+  wordleRow++;
+  if (guess === secret) {
+    document.getElementById('wordMsg').textContent = `Richtig! In ${wordleRow} Versuchen!`;
+    document.getElementById('wordGuessInput').disabled = true;
+  } else if (wordleRow === 6) {
+    document.getElementById('wordMsg').textContent = `Verloren! Das Wort war: ${secret}`;
+    document.getElementById('wordGuessInput').disabled = true;
+  } else {
+    document.getElementById('wordMsg').textContent = `Noch ${6-wordleRow} Versuche`;
+  }
+}
+
+// INIT
+initMemory();
+initWordle();
+startSnake();
+</script>
+</body>
+</html>
