@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nett hier – Baden-Württemberg</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  background:#f2f2f2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+}
+
+.sticker{
+  background:#ffd400;
+  width:520px;
+  height:520px;
+  border-radius:18px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.2);
+  padding:40px;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.small{
+  font-size:28px;
+  font-weight:600;
+  margin-bottom:10px;
+}
+
+.big{
+  font-size:120px;
+  font-weight:900;
+  line-height:0.9;
+}
+
+.bottom{
+  position:absolute;
+  bottom:25px;
+  left:40px;
+  font-size:18px;
+  font-weight:bold;
+}
+
+.info{
+  position:absolute;
+  top:20px;
+  right:25px;
+  font-size:14px;
+}
+
+@media (max-width:600px){
+  .sticker{
+    width:320px;
+    height:320px;
+    padding:30px;
+  }
+
+  .big{
+    font-size:90px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="sticker">
+
+<div class="info">THE LÄND</div>
+<div class="big">Nett hier.</div>
+<div class="small">aber waren Sie schon mal in</div>
+<div class="bottom">
+Baden-Württemberg?
+</div>
+
+</div>
+
+</body>
+</html>

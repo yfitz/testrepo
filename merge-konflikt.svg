@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" font-family="monospace">
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#1e1e2e"/>
+
+  <!-- Title -->
+  <text x="400" y="45" text-anchor="middle" font-size="22" font-weight="bold" fill="#cdd6f4">Merge Konflikt</text>
+  <text x="400" y="68" text-anchor="middle" font-size="13" fill="#6c7086">dasisteinkonflikt.error.md</text>
+
+  <!-- LOCAL branch box -->
+  <rect x="60" y="100" width="220" height="90" rx="10" fill="#313244" stroke="#89b4fa" stroke-width="2"/>
+  <text x="170" y="125" text-anchor="middle" font-size="13" font-weight="bold" fill="#89b4fa">LOCAL  (main)</text>
+  <text x="170" y="148" text-anchor="middle" font-size="11" fill="#a6e3a1">commit: ffc5872</text>
+  <text x="170" y="168" text-anchor="middle" font-size="11" fill="#cdd6f4">Datei existiert</text>
+  <text x="170" y="184" text-anchor="middle" font-size="18">📄</text>
+
+  <!-- REMOTE branch box -->
+  <rect x="520" y="100" width="220" height="90" rx="10" fill="#313244" stroke="#f38ba8" stroke-width="2"/>
+  <text x="630" y="125" text-anchor="middle" font-size="13" font-weight="bold" fill="#f38ba8">REMOTE  (origin/main)</text>
+  <text x="630" y="148" text-anchor="middle" font-size="11" fill="#a6e3a1">commit: d47557f</text>
+  <text x="630" y="168" text-anchor="middle" font-size="11" fill="#cdd6f4">Datei gelöscht</text>
+  <text x="630" y="184" text-anchor="middle" font-size="18">🗑️</text>
+
+  <!-- Arrows down to conflict -->
+  <line x1="170" y1="190" x2="340" y2="290" stroke="#89b4fa" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <line x1="630" y1="190" x2="460" y2="290" stroke="#f38ba8" stroke-width="2" marker-end="url(#arrowRed)"/>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#89b4fa"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f38ba8"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#a6e3a1"/>
+    </marker>
+    <marker id="arrowYellow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f9e2af"/>
+    </marker>
+  </defs>
+
+  <!-- Conflict box -->
+  <rect x="290" y="290" width="220" height="70" rx="10" fill="#45475a" stroke="#fab387" stroke-width="2.5"/>
+  <text x="400" y="318" text-anchor="middle" font-size="15" font-weight="bold" fill="#fab387">⚡ KONFLIKT</text>
+  <text x="400" y="340" text-anchor="middle" font-size="11" fill="#cdd6f4">Git kann nicht entscheiden!</text>
+  <text x="400" y="356" text-anchor="middle" font-size="10" fill="#6c7086">Status: UD (Unmerged Deleted)</text>
+
+  <!-- Divider -->
+  <line x1="100" y1="400" x2="700" y2="400" stroke="#45475a" stroke-width="1" stroke-dasharray="6,4"/>
+  <text x="400" y="393" text-anchor="middle" font-size="11" fill="#6c7086">Lösung wählen</text>
+
+  <!-- Option 1: Keep file -->
+  <rect x="80" y="415" width="270" height="110" rx="10" fill="#1e3a2e" stroke="#a6e3a1" stroke-width="2"/>
+  <text x="215" y="440" text-anchor="middle" font-size="13" font-weight="bold" fill="#a6e3a1">Option 1 — Datei behalten</text>
+  <rect x="95" y="452" width="240" height="28" rx="5" fill="#12261a"/>
+  <text x="215" y="471" text-anchor="middle" font-size="12" fill="#a6e3a1" font-family="monospace">git add dasisteinkonflikt.error.md</text>
+  <rect x="95" y="486" width="240" height="28" rx="5" fill="#12261a"/>
+  <text x="215" y="505" text-anchor="middle" font-size="12" fill="#a6e3a1" font-family="monospace">git commit</text>
+
+  <!-- Option 2: Delete file -->
+  <rect x="450" y="415" width="270" height="110" rx="10" fill="#3a1e1e" stroke="#f38ba8" stroke-width="2"/>
+  <text x="585" y="440" text-anchor="middle" font-size="13" font-weight="bold" fill="#f38ba8">Option 2 — Datei löschen</text>
+  <rect x="465" y="452" width="240" height="28" rx="5" fill="#261212"/>
+  <text x="585" y="471" text-anchor="middle" font-size="12" fill="#f38ba8" font-family="monospace">git rm dasisteinkonflikt.error.md</text>
+  <rect x="465" y="486" width="240" height="28" rx="5" fill="#261212"/>
+  <text x="585" y="505" text-anchor="middle" font-size="12" fill="#f38ba8" font-family="monospace">git commit</text>
+
+  <!-- Arrows from conflict to options -->
+  <line x1="350" y1="360" x2="215" y2="415" stroke="#a6e3a1" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowGreen)"/>
+  <line x1="450" y1="360" x2="585" y2="415" stroke="#f38ba8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowRed)"/>
+
+  <!-- Footer -->
+  <text x="400" y="558" text-anchor="middle" font-size="11" fill="#6c7086">Danach: git push → Konflikt gelöst</text>
+  <rect x="260" y="567" width="280" height="22" rx="6" fill="#313244"/>
+  <text x="400" y="582" text-anchor="middle" font-size="11" fill="#f9e2af" font-family="monospace">git merge --abort  (zum Abbrechen)</text>
+
+</svg>
