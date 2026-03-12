@@ -2,4 +2,4 @@
 
 
 Döp Döp Döp Döp Max Verstappen
-Net hier aber waren Sie schon mal in Baden-Württemberg
+Nett hier aber waren Sie schon mal in Baden-Württemberg
