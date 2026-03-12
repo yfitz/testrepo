@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 nur ein test zum konflikt
 BRAUCHST DU KONFLIKT ALDA!!!!!!
 BRAUCHST DU KONFLIKT ALDA!!!!!!
@@ -62,3 +63,6 @@ BRAUCHST DU KONFLIKT ALDA!!!!!!
 BRAUCHST DU KONFLIKT ALDA!!!!!!
 BRAUCHST DU KONFLIKT ALDA!!!!!!
 BRAUCHST DU KONFLIKT ALDA!!!!!!
+=======
+kein konflikt
+>>>>>>> 795bdbd0c1097b4d434c43bd335763d24a2ab5b1
